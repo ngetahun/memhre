@@ -7,6 +7,7 @@ import { CodeBlock } from '@/components/ui/codeblock'
 import { MemoizedReactMarkdown } from '@/components/markdown'
 import { IconOpenAI, IconUser } from '@/components/ui/icons'
 import { ChatMessageActions } from '@/components/chat-message-actions'
+import { ComponentPropsWithoutRef } from 'react'
 
 export interface ChatMessageProps {
   message: Message
@@ -36,22 +37,28 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
             p({ children }) {
               return <p className="mb-2 last:mb-0">{children}</p>
             },
-            code({ node, inline, className, children, ...props }) {
-              if (children.length) {
-                if (children[0] == '▍') {
+            code({ inline, className, children, ...props }: ComponentPropsWithoutRef<'code'> & { inline?: boolean }) {
+              if (children && typeof children === 'string') {
+                if (children.startsWith('▍')) {
                   return (
                     <span className="mt-1 animate-pulse cursor-default">▍</span>
                   )
                 }
 
-                children[0] = (children[0] as string).replace('`▍`', '▍')
+                if (typeof children === 'string') {
+                  children = children.replace('`▍`', '▍')
+                } else if (Array.isArray(children)) {
+                  children = (children as (string | React.ReactNode)[]).map((child: string | React.ReactNode): string | React.ReactNode =>
+                    typeof child === 'string' ? child.replace('`▍`', '▍') : child
+                  )
+                }
               }
 
               const match = /language-(\w+)/.exec(className || '')
 
               if (inline) {
                 return (
-                  <code className={className} {...props}>
+                  <code className={cn('rounded-sm bg-muted px-1 py-0.5', className)} {...props}>
                     {children}
                   </code>
                 )

@@ -11,7 +11,7 @@ export const auth = async ({
   const supabase = createServerComponentClient({
     cookies: () => cookieStore
   })
-  const { data, error } = await supabase.auth.getSession()
+  const { data: { session }, error } = await supabase.auth.getSession()
   if (error) throw error
-  return data.session
+  return session?.user
 }
