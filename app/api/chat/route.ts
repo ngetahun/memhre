@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   })
   const json = await req.json()
   const { messages, previewToken } = json
-  const userId = (await auth({ cookieStore }))?.user.id
+  const userId = (await auth({ cookieStore }))?.id
 
   if (!userId) {
     return new Response('Unauthorized', {
