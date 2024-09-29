@@ -111,3 +111,16 @@ export async function shareChat(chat: Chat) {
 
   return payload
 }
+
+export async function logout() {
+  const cookieStore = cookies()
+  const supabase = createServerActionClient<Database>({
+    cookies: () => cookieStore
+  })
+
+  await supabase.auth.signOut()
+  // Clear cookies or any other session data if necessary
+  cookieStore.delete('supabase-auth-token')
+  // Redirect to login page
+  return redirect('/login')
+}

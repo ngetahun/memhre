@@ -1,10 +1,17 @@
+"use client"
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { nanoid } from '@/lib/utils'
-import { Chat } from '@/components/chat'
 
 export const runtime = 'edge'
 
 export default function IndexPage() {
+  const router = useRouter()
   const id = nanoid()
 
-  return <Chat id={id} />
+  useEffect(() => {
+    router.push(`/lobby/${id}`)
+  }, [router, id])
+
+  return null
 }
