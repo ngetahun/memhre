@@ -17,3 +17,19 @@ export type ServerActionResult<Result> = Promise<
       error: string
     }
 >
+
+export interface UserProfileContent {
+  name: string;
+  email: string;
+  phone: string;
+  joined: string;
+  location: string;
+  company: string;
+}
+
+export interface UserProfile {
+  id: string;
+  user_id: string;
+  content: UserProfileContent;
+  created_at: string;
+}

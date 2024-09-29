@@ -1,9 +1,9 @@
+"use client"
 import * as React from 'react'
 import Link from 'next/link'
-
 import { cn } from '@/lib/utils'
 import { auth } from '@/auth'
-import { clearChats } from '@/app/actions'
+import { clearChats, logout } from '@/app/actions'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Sidebar } from '@/components/sidebar'
 import { SidebarList } from '@/components/sidebar-list'
@@ -17,21 +17,32 @@ import { SidebarFooter } from '@/components/sidebar-footer'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ClearHistory } from '@/components/clear-history'
 import { UserMenu } from '@/components/user-menu'
-import { cookies } from 'next/headers'
+import { useRouter } from 'next/navigation'
 
-export async function Header() {
-  const cookieStore = cookies()
-  let session = null
-  let authError = false
+const Header = () => {
+  const router = useRouter()
+  const [session, setSession] = React.useState(null)
+  const [authError, setAuthError] = React.useState(false)
 
-  try {
-    session = await auth({ cookieStore })
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('AuthSessionMissingError')) {
-      authError = true
-    } else {
-      throw error
+  React.useEffect(() => {
+    const getSession = async () => {
+      try {
+        const session = await auth()
+        setSession(session)
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('AuthSessionMissingError')) {
+          setAuthError(true)
+        } else {
+          throw error
+        }
+      }
     }
+    getSession()
+  }, [])
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/login')
   }
 
   return (
@@ -45,7 +56,6 @@ export async function Header() {
         ) : session ? (
           <Sidebar>
             <React.Suspense fallback={<div className="flex-1 overflow-auto" />}>
-              {/* @ts-ignore */}
               <SidebarList userId={session.id} />
             </React.Suspense>
             <SidebarFooter>
@@ -63,15 +73,15 @@ export async function Header() {
           <IconSeparator className="h-6 w-6 text-muted-foreground/50" />
           {authError || !session ? (
             <Button variant="link" asChild className="-ml-2">
-              <Link href="/sign-in">Login</Link>
+              <Link href="/login">Login</Link>
             </Button>
           ) : (
-            <UserMenu user={session} />
+            <UserMenu user={session.user} />
           )}
         </div>
       </div>
-      {/* <div className="flex items-center justify-end space-x-2">
-      </div> */}
     </header>
   )
 }
+
+export default Header

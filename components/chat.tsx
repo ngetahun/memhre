@@ -1,7 +1,8 @@
 'use client'
 
 import { useChat, type Message } from 'ai/react'
-
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { ChatList } from '@/components/chat-list'
 import { ChatPanel } from '@/components/chat-panel'
@@ -16,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { useState } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { toast } from 'react-hot-toast'
@@ -48,6 +48,26 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         }
       }
     })
+
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      const response = await fetch('/api/auth/status')
+      if (response.status !== 200) {
+        setIsAuthenticated(false)
+        router.push('/login')
+      }
+    }
+    checkAuth()
+  }, [router])
+
+  if (!isAuthenticated) {
+    return null
+  }
+
   return (
     <>
       <div className={cn('pb-[200px] pt-4 md:pt-10', className)}>
