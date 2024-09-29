@@ -1,5 +1,6 @@
-/** @type {import('prettier').Config} */
-module.exports = {
+import tailwindPlugin from 'prettier-plugin-tailwindcss';
+
+export default {
   endOfLine: 'lf',
   semi: false,
   useTabs: false,
@@ -31,5 +32,5 @@ module.exports = {
   importOrderParserPlugins: ['typescript', 'jsx', 'decorators-legacy'],
   importOrderMergeDuplicateImports: true,
   importOrderCombineTypeAndValueImports: true,
-  plugins: [import('prettier-plugin-tailwindcss')]
+  plugins: [tailwindPlugin]
 }
