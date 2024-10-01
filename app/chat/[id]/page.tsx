@@ -19,7 +19,13 @@ export async function generateMetadata({
   params
 }: ChatPageProps): Promise<Metadata> {
   const cookieStore = cookies()
-  const session = await auth({ cookieStore })
+  let session
+  try {
+    session = await auth({ cookieStore })
+  } catch (error) {
+    console.error('Error authenticating user:', error)
+    redirect('/sign-in')
+  }
 
   if (!session) {
     return {}
@@ -33,11 +39,12 @@ export async function generateMetadata({
 
 export default async function ChatPage({ params }: ChatPageProps) {
   const cookieStore = cookies()
-  const session = await auth({ cookieStore })
-
-  if (!session) {
-    redirect(`/sign-in?next=/chat/${params.id}`)
-  }
+  let session
+	try {
+		session = await auth({ cookieStore })
+	} catch (error) {
+		redirect(`/sign-in?next=/chat/${params.id}`)
+	}
 
   const chat = await getChat(params.id)
 

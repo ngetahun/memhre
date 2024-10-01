@@ -34,13 +34,16 @@ export function LoginForm({
   })
 
   const signIn = async () => {
-    const { email, password } = formState
-    const { error } = await supabase.auth.signInWithPassword({
+    const { email, password } = formState;
+    const { error, data } = await supabase.auth.signInWithPassword({
       email,
-      password
-    })
-    return error
-  }
+      password,
+    });
+    if (error) {
+      return error;
+    }
+    return data.session;
+  };
 
   const signUp = async () => {
     const { email, password } = formState
@@ -61,7 +64,7 @@ export function LoginForm({
 
     const error = action === 'sign-in' ? await signIn() : await signUp()
 
-    if (error) {
+    if (error instanceof Error) {
       setIsLoading(false)
       toast.error(error.message)
       return
@@ -80,6 +83,7 @@ export function LoginForm({
             <Input
               name="email"
               type="email"
+              autoComplete="email"
               value={formState.email}
               onChange={e =>
                 setFormState(prev => ({
@@ -94,6 +98,7 @@ export function LoginForm({
             <Input
               name="password"
               type="password"
+              autoComplete="current-password"
               value={formState.password}
               onChange={e =>
                 setFormState(prev => ({

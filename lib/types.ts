@@ -33,3 +33,12 @@ export interface UserProfile {
   content: UserProfileContent;
   created_at: string;
 }
+
+export interface Resource {
+  id: string;
+  title: string;
+  description: string;
+  type: 'chat' | 'file' | 'link';
+  content: string;
+  created_at: string;
+}

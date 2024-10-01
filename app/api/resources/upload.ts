@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
+import { createServerActionClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/db_types'
 import { nanoid } from 'nanoid'
+import { cookies } from 'next/headers'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const supabase = createServerActionClient<Database>({ req, res })
+const supabase = createServerComponentClient<Database>({ cookies: () => cookies() })
   const { file } = req.body
 
   if (!file) {
@@ -18,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: error.message })
   }
 
-  const fileUrl = data?.Key ? supabase.storage.from('resources').getPublicUrl(data.Key).publicURL : null
+  const fileUrl = data?.path ? supabase.storage.from('resources').getPublicUrl(data.path).data.publicUrl : null
 
   if (!fileUrl) {
     return res.status(500).json({ error: 'Failed to get file URL' })

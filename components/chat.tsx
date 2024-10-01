@@ -58,7 +58,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       const response = await fetch('/api/auth/status')
       if (response.status !== 200) {
         setIsAuthenticated(false)
-        router.push('/login')
+        router.push('/sign-in')
       }
     }
     checkAuth()

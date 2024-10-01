@@ -122,5 +122,5 @@ export async function logout() {
   // Clear cookies or any other session data if necessary
   cookieStore.delete('supabase-auth-token')
   // Redirect to login page
-  return redirect('/login')
+  return redirect('/sign-in')
 }

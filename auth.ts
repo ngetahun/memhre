@@ -1,17 +1,14 @@
-import 'server-only'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 
-export const auth = async ({
-  cookieStore
-}: {
-  cookieStore: ReturnType<typeof cookies>
-}) => {
-  // Create a Supabase client configured to use cookies
-  const supabase = createServerComponentClient({
-    cookies: () => cookieStore
-  })
-  const { data: { session }, error } = await supabase.auth.getSession()
-  if (error) throw error
-  return session?.user
-}
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+)
+
+export const auth = async ({ cookieStore }: { cookieStore: any }) => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) {
+    throw new Error('AuthSessionMissingError: Auth session missing');
+  }
+  return data.user;
+};

@@ -7,7 +7,12 @@ import { redirect } from 'next/navigation'
 
 export default async function SignInPage() {
   const cookieStore = cookies()
-  const session = await auth({ cookieStore })
+  let session
+  try {
+    session = await auth({ cookieStore })
+  } catch (error) {
+    // Do nothing in case of error
+  }
   // redirect to home if user is already logged in
   if (session) {
     redirect('/')

@@ -11,7 +11,7 @@ export default function ResourceUpload() {
   const [description, setDescription] = useState('')
   const [type, setType] = useState('file')
   const [content, setContent] = useState('')
-  const [file, setFile] = useState(null)
+  const [file, setFile] = useState<File | null>(null)
   const router = useRouter()
 
   const handleUpload = async () => {
@@ -69,7 +69,7 @@ export default function ResourceUpload() {
           {type === 'file' && (
             <Input
               type="file"
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
             />
           )}
           {type !== 'file' && (

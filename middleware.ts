@@ -10,13 +10,11 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res })
 
   // Refresh session if expired - required for Server Components
-  // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
   const {
     data: { user }
   } = await supabase.auth.getUser()
 
-  // OPTIONAL: this forces users to be logged in to use the chatbot.
-  // If you want to allow anonymous users, simply remove the check below.
+  // Redirect to login page if session is missing
   if (
     !user &&
     !req.url.includes('/sign-in') &&

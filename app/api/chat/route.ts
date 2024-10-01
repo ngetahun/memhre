@@ -23,7 +23,16 @@ export async function POST(req: Request) {
   })
   const json = await req.json()
   const { messages, previewToken } = json
-  const userId = (await auth({ cookieStore }))?.id
+
+  let userId;
+  try {
+    userId = (await auth({ cookieStore }))?.id;
+  } catch (error) {
+    console.error('Error authenticating user:', error);
+    return new Response('Unauthorized', {
+      status: 401
+    });
+  }
 
   if (!userId) {
     return new Response('Unauthorized', {

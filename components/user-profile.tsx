@@ -1,13 +1,21 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database, UserProfile } from '@/lib/db_types'
+import { Database } from '@/lib/db_types'
 import { Button } from '@/components/ui/button'
 import { Line } from 'react-chartjs-2'
-import 'chart.js/auto'
+
+interface UserProfileContent {
+  name: string;
+  email: string;
+  phone: string;
+  joined: string;
+  location: string;
+  company: string;
+}
 
 export default function UserProfile({ userId }: { userId: string }) {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfileContent | null>(null)
   const [metrics, setMetrics] = useState({
     totalOrders: 9,
     lifetimeValue: 49.00,
@@ -23,7 +31,7 @@ export default function UserProfile({ userId }: { userId: string }) {
       if (error) {
         console.error(error)
       } else {
-        setUserProfile(data)
+        setUserProfile(data.content as unknown as UserProfileContent)
       }
     }
     fetchUserProfile()
@@ -46,7 +54,7 @@ export default function UserProfile({ userId }: { userId: string }) {
     return <div>Loading...</div>
   }
 
-  const { name, email, phone, joined, location, company } = userProfile.content
+  const { name, email, phone, joined, location, company } = userProfile
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

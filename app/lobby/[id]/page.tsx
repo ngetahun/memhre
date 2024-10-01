@@ -17,7 +17,7 @@ export default function LobbyPage({ params }: { params: { id: string } }) {
       const { data, error } = await supabase.auth.getUser()
       if (error || !data.user) {
         setIsAuthenticated(false)
-        router.push('/login')
+        router.push('/sign-in')
       } else {
         setUser(data.user)
       }
