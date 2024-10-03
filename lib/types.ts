@@ -41,4 +41,5 @@ export interface Resource {
   type: 'chat' | 'file' | 'link';
   content: string;
   created_at: string;
+	user_id: string;
 }
