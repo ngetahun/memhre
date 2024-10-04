@@ -1,14 +1,22 @@
-import { createClient } from '@supabase/supabase-js'
+import NextAuth from "next-auth"
+import { SupabaseAdapter } from "@auth/supabase-adapter"
+import type { User } from "next-auth"
 
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
-)
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  providers: [],
+  adapter: SupabaseAdapter({
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+    secret: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+  }),
+})
 
-export const auth = async ({ cookieStore }: { cookieStore: any }) => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) {
-    throw new Error('AuthSessionMissingError: Auth session missing');
+// Add type declarations for the user
+declare module "next-auth" {
+  interface Session {
+    user: User & {
+      id: string
+    }
   }
-  return data.user;
-};
+}
+
+
