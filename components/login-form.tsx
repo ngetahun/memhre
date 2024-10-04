@@ -10,6 +10,7 @@ import { Label } from './ui/label'
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { Database } from '@/lib/db_types'
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<'div'> {
   action: 'sign-in' | 'sign-up'
@@ -23,7 +24,10 @@ export function LoginForm({
   const [isLoading, setIsLoading] = React.useState(false)
   const router = useRouter()
   // Create a Supabase client configured to use cookies
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentClient<Database>({
+		cookieOptions: { name: 'supabase-auth-token' }
+	})
+
 
   const [formState, setFormState] = React.useState<{
     email: string
@@ -40,9 +44,10 @@ export function LoginForm({
       password,
     });
     if (error) {
-      return error;
+      toast.error(error.message)
+      return { data: null, error }
     }
-    return data.session;
+    return { data: data.session, error: null }
   };
 
   const signUp = async () => {
@@ -55,23 +60,27 @@ export function LoginForm({
 
     if (!error && !data.session)
       toast.success('Check your inbox to confirm your email address!')
-    return error
+    return {data: data, error: error}
   }
 
   const handleOnSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault()
     setIsLoading(true)
 
-    const error = action === 'sign-in' ? await signIn() : await signUp()
+    const result = action === 'sign-in' ? await signIn() : await signUp()
 
-    if (error instanceof Error) {
+    if (result.error) {
       setIsLoading(false)
-      toast.error(error.message)
+      toast.error(result.error.message)
       return
     }
 
+    if (result.data && result.data.user) {
+      localStorage.setItem('user', JSON.stringify(result.data.user));
+    }
+
     setIsLoading(false)
-    router.refresh()
+    router.push('/')
   }
 
   return (

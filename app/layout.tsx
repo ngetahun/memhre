@@ -6,8 +6,9 @@ import { cn } from '@/lib/utils'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { Providers } from '@/components/providers'
 import Header from '@/components/header'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+
 import { cookies } from 'next/headers'
+import { createSupabaseProvider } from '@/lib/SupabaseProvider'
 
 export const metadata: Metadata = {
   title: {
@@ -34,9 +35,8 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const supabase = createServerComponentClient({ cookies })
-
-  const { data: { user } } = await supabase.auth.getUser()
+	const supabaseProvider = await createSupabaseProvider()
+  const user = await supabaseProvider.getUser()
 
   return (
     <html lang="en" suppressHydrationWarning>

@@ -4,20 +4,17 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/db_types'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-
+import { createSupabaseProvider } from '@/lib/SupabaseProvider'
+import { type Chat } from '@/lib/types'
 export default function SidebarList({ userId }: { userId: string }) {
-  const [chats, setChats] = useState<Database['public']['Tables']['chats']['Row'][]>([])
+  const [chats, setChats] = useState<Chat[]>([])
   const router = useRouter()
-  const supabase = createClientComponentClient<Database>()
+  const supabase = createSupabaseProvider()
 
   useEffect(() => {
     const fetchChats = async () => {
-      const { data, error } = await supabase.from('chats').select('*').eq('user_id', userId)
-      if (error) {
-        console.error(error)
-      } else {
-        setChats(data)
-      }
+      const data  = await (await supabase).getChats(userId)
+      setChats(data)
     }
     fetchChats()
   }, [supabase, userId])

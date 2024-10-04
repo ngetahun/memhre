@@ -2,10 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/db_types'
 import { cookies } from 'next/headers'
+import { type Resource } from '@/lib/types'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = createServerComponentClient<Database>({ cookies: () => cookies() })
-
   if (req.method === 'GET') {
     const { data, error } = await supabase.from('resources').select('*')
     if (error) {

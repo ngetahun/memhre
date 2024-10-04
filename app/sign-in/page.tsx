@@ -6,17 +6,17 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 export default async function SignInPage() {
-  const cookieStore = cookies()
-  let session
-  try {
-    session = await auth({ cookieStore })
-  } catch (error) {
-    // Do nothing in case of error
-  }
+  // const cookieStore = cookies()
+  // let session
+  // try {
+  //   session = await auth({ cookieStore })
+  // } catch (error) {
+  //   console.log('Error during sign-in:', error) // Add this line
+  // }
   // redirect to home if user is already logged in
-  if (session) {
-    redirect('/')
-  }
+  // if (session) {
+  //   redirect('/')
+  // }
   return (
     <div className="flex h-[calc(100vh-theme(spacing.16))] flex-col items-center justify-center py-10">
       <div className="w-full max-w-sm">

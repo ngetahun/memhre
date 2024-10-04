@@ -45,6 +45,8 @@ interface SidebarActionsProps {
   shareChat: (chat: Chat) => ServerActionResult<Chat>
 }
 
+
+
 export function SidebarActions({
   chat,
   removeChat,
@@ -142,20 +144,10 @@ export function SidebarActions({
               disabled={isSharePending}
               onClick={() => {
                 startShareTransition(async () => {
-                  if (chat.sharePath) {
-                    await new Promise(resolve => setTimeout(resolve, 500))
+                  if (chat.sharePath) { // Ensure sharePath is defined
                     copyShareLink(chat)
-                    return
                   }
-
-                  const result = await shareChat(chat)
-
-                  if (result && 'error' in result) {
-                    toast.error(result.error)
-                    return
-                  }
-
-                  copyShareLink(result)
+                  return
                 })
               }}
             >

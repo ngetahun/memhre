@@ -2,8 +2,7 @@
 
 import Image from 'next/image'
 import { type Session } from '@supabase/auth-helpers-nextjs'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
+
 
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +13,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { IconExternalLink } from '@/components/ui/icons'
+import { signOut } from '@/auth'
 
 export interface UserMenuProps {
   user: Session['user']
@@ -25,15 +25,6 @@ function getUserInitials(name: string) {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
-  const router = useRouter()
-
-  // Create a Supabase client configured to use cookies
-  const supabase = createClientComponentClient()
-
-  const signOut = async () => {
-    await supabase.auth.signOut()
-    router.refresh()
-  }
 
   return (
     <div className="flex items-center justify-between">

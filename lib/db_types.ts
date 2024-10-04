@@ -6,6 +6,8 @@ export type Json =
   | { [key: string]: Json }
   | Json[]
 
+export type Chat = Database['public']['Tables']['chats']['Row']
+export type Resources = Database['public']['Tables']['resources']['Row']
 export interface Database {
   public: {
     Tables: {
